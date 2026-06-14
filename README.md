@@ -154,3 +154,6 @@ POST /empresa/{empresaId}/veiculos
 PUT /empresa/{empresaId}/veiculos/{veiculoId}
 DELETE /empresa/{empresaId}/veiculos/{veiculoId}
 ```
+
+
+##Easter Egg: 18092022
