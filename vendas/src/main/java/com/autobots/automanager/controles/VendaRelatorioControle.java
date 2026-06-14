@@ -1,0 +1,70 @@
+package com.autobots.automanager.controles;
+
+import com.autobots.automanager.assembler.VendaAssembler;
+import com.autobots.automanager.dtos.VendaDto;
+import com.autobots.automanager.servicos.VendaRelatorioServico;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+@RestController
+@RequestMapping("/empresa/{empresaId}/vendas")
+public class VendaRelatorioControle {
+    public VendaRelatorioControle(VendaRelatorioServico servico, VendaAssembler assembler) {
+        this.servico = servico;
+        this.assembler = assembler;
+    }
+
+
+
+    private final VendaRelatorioServico servico;
+
+    private final VendaAssembler assembler;
+
+    @GetMapping
+    public ResponseEntity<CollectionModel<EntityModel<VendaDto>>> listarVendas(
+            @PathVariable Long empresaId,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dataFim) {
+
+        List<EntityModel<VendaDto>> lista = servico.listarVendasPorPeriodo(empresaId, dataInicio, dataFim)
+                .stream().map(assembler::toModel).collect(Collectors.toList());
+
+        return ResponseEntity.ok(CollectionModel.of(lista,
+                linkTo(methodOn(VendaRelatorioControle.class).listarVendas(empresaId, dataInicio, dataFim)).withSelfRel()));
+    }
+
+    @GetMapping("/{vendaId}")
+    public ResponseEntity<EntityModel<VendaDto>> obterVenda(@PathVariable Long empresaId,
+                                                            @PathVariable Long vendaId) {
+        return ResponseEntity.ok(assembler.toModel(servico.obterVenda(empresaId, vendaId)));
+    }
+
+    @PostMapping
+    public ResponseEntity<EntityModel<VendaDto>> criarVenda(@PathVariable Long empresaId,
+                                                            @RequestBody VendaDto dto) {
+        return ResponseEntity.ok(assembler.toModel(servico.criarVenda(empresaId, dto)));
+    }
+
+    @PutMapping("/{vendaId}")
+    public ResponseEntity<EntityModel<VendaDto>> atualizarVenda(@PathVariable Long empresaId,
+                                                                @PathVariable Long vendaId,
+                                                                @RequestBody VendaDto dto) {
+        return ResponseEntity.ok(assembler.toModel(servico.atualizarVenda(empresaId, vendaId, dto)));
+    }
+
+    @DeleteMapping("/{vendaId}")
+    public ResponseEntity<Void> excluirVenda(@PathVariable Long empresaId,
+                                             @PathVariable Long vendaId) {
+        servico.excluirVenda(empresaId, vendaId);
+        return ResponseEntity.noContent().build();
+    }
+}
