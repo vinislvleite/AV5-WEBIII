@@ -26,30 +26,44 @@ APIs REST em Java/Spring Boot para a atividade AV5 do sistema AutoManager.
 
 ## Como rodar
 
+Cada microservico e independente e deve ser rodado separadamente. Escolha uma das opcoes abaixo.
+
+### Opcao 1: Maven Wrapper (linha de comando)
+
 Entre na pasta do microservico desejado:
 
-```powershell
+```bash
 cd clientes
 ```
 
-Rode com o Maven Wrapper:
+No Linux/macOS:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Para rodar outro microservico, troque `clientes` pela pasta desejada e rode o mesmo comando:
+No Windows (PowerShell ou CMD):
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Para rodar outro microservico, troque `clientes` pela pasta desejada e repita o comando:
 
 ```bash
 cd funcionarios
 ./mvnw spring-boot:run
 ```
 
-No Windows, se preferir PowerShell:
+### Opcao 2: pela IDE (IntelliJ, Eclipse, VS Code)
 
-```powershell
-.\mvnw.cmd spring-boot:run
-```
+1. Abra cada microservico como um projeto Maven separado (ou importe todos como modulos, se a IDE suportar).
+2. Aguarde a IDE baixar as dependencias do Maven.
+3. Localize a classe principal da aplicacao (a anotada com `@SpringBootApplication`), geralmente em `src/main/java/.../*Application.java`.
+4. Clique com o botao direito na classe e selecione **Run** (ou **Debug**).
+5. Repita o processo para cada microservico que quiser executar, em janelas/instancias separadas.
+
+> Cada microservico sobe em uma porta diferente (veja a tabela acima), entao varios podem rodar ao mesmo tempo sem conflito.
 
 ## Como testar
 
@@ -58,6 +72,8 @@ Dentro de cada pasta, execute:
 ```bash
 ./mvnw test
 ```
+
+Ou, pela IDE, clique com o botao direito na pasta `src/test/java` e selecione **Run Tests**.
 
 ## Autenticacao
 
@@ -155,5 +171,4 @@ PUT /empresa/{empresaId}/veiculos/{veiculoId}
 DELETE /empresa/{empresaId}/veiculos/{veiculoId}
 ```
 
-
-##Easter Egg: 18092022
+## Easter Egg: 18092022
